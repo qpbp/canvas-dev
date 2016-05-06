@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html ng-app="app">
 <head>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet"
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-route.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.1/fabric.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link href="assets/styles/style.css" rel="stylesheet"
         type="text/css"/>
   <meta charset=utf-8/>
   <meta name="description" content="">
@@ -10,12 +15,10 @@
   <title>Canvas Demo</title>
 </head>
 <body>
-
+<div ng-view class="container"></div>
 <!--Libraries-->
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-route.js"></script>
 <!--Angular files-->
 <script src="app/app.routes.js"></script>
-<script src="app/components/main/main.controller.js"></script>
+<script src="app/controllers/main.controller.js"></script>
 </body>
 </html>

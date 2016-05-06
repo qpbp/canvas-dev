@@ -1,0 +1,19 @@
+.canvas-container {
+  border: 1px solid black;
+  top: 165px;
+  left: 180px;
+}
+
+.working-area {
+  background-image: url("../images/product.png");
+  background-repeat: no-repeat;
+  height: 500px;
+}
+
+.logo {
+  /*border: 1px solid black;*/
+}
+
+.logo img{
+  width: 200px;
+}
