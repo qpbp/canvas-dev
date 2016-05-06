@@ -59,14 +59,13 @@ angular.module('app')
 
     //generate function
     $scope.generateImage = function (){
-      fabric.Image.fromURL($scope.product.url, function (product) {
-        $scope.generatedImage = product.toDataURL();
-        // fabric.Image.fromURL($scope.canvas.toDataURL(), function (canvas) {
-        //
-        //   $scope.generatedImage = picture.toDataURL();
-        //   console.log($scope.generatedImage);
-        //   $scope.$apply();
-        // });
+      fabric.Image.fromURL($scope.product.url, function (picture) {
+        fabric.Image.fromURL($scope.canvas.toDataURL(), function (canvas) {
+
+          var group = new fabric.Group([picture, canvas]);
+          $scope.generatedImage = group.toDataURL();
+          $scope.$apply();
+        });
       });
     };
     $scope.canvas.on("object:selected", function (options, event) {
