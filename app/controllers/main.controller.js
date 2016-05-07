@@ -19,7 +19,7 @@ angular.module('app')
     };
 
     //the list of logos
-    $scope.logos = ['logo1.png', 'logo2.png', 'logo3.png'].map(function (imageUrl) {
+    $scope.logos = ['logo1.png', 'logo2.png', 'logo3.png', 'logo4.png', 'logo5.png'].map(function (imageUrl) {
       //this comfortable if we will change the basic URL
       var basicUrl = "assets/images/";
       return basicUrl + imageUrl;
@@ -56,18 +56,30 @@ angular.module('app')
 
       $scope.canvas.renderAll();
     };
-
     //generate function
-    $scope.generateImage = function (){
+    $scope.generateImage = function () {
+      //upload product image
       fabric.Image.fromURL($scope.product.url, function (picture) {
+
         fabric.Image.fromURL($scope.canvas.toDataURL(), function (canvas) {
 
-          var group = new fabric.Group([picture, canvas]);
+          var img = canvas.set({
+            left: 180,
+            top: 165
+          });
+
+          img.selectable = false;
+          
+          var group = new fabric.Group([picture, img]);
+
           $scope.generatedImage = group.toDataURL();
+
           $scope.$apply();
+
         });
       });
     };
+
     $scope.canvas.on("object:selected", function (options, event) {
       var object = options.target; //This is the object selected
       // You can do anything you want and then call...
@@ -77,6 +89,9 @@ angular.module('app')
       $scope.$apply()
     });
 
-    $scope.canvas.renderAll();
+    /*
+
+    //  $scope.canvas.renderAll();
+    //  */
 
   }]);
