@@ -3,6 +3,8 @@
 angular.module('app')
 
   .controller('MainController', ['$scope', function ($scope) {
+
+
     //here we will save the last added object on canvas
     var lastAdded = {
       left: null,
@@ -41,14 +43,16 @@ angular.module('app')
       $scope.canvas.clear();
       fabric.Image.fromURL(logo, function (img) {
 
-
         //$scope.product.canvas.height && $scope.product.canvas.width
         //for centering object
+
+        // cw, ch - canvas dimestions
+        // iw, ih - image dimestions
+
+
         var obj = {
           scaleX: $scope.canvas.width / img.width,
-          scaleY: $scope.canvas.height / (2 * img.height),
-          top: 2,
-          left: 2
+          scaleY: $scope.canvas.height / (3*img.height)
         };
 
         if (lastAdded.top && lastAdded.left) {
@@ -91,13 +95,42 @@ angular.module('app')
       });
     };
 
+    //here we save the last coord of object
     $scope.canvas.on("object:selected", function (options, event) {
       var object = options.target; //This is the object selected
-      // You can do anything you want and then call...
       lastAdded.left = object.left;
       lastAdded.top = object.top;
       lastAdded.logoUrl = object.logoUrl;
       $scope.$apply()
+    });
+
+    //here we block the scaling over canvas
+  /*  $scope.canvas.on("object:scaling", function (e) {
+      var obj = e.target;
+      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
+        return;
+      }
+    });*/
+
+    //here we block the moving over canvas
+    $scope.canvas.on("object:moving", function (e) {
+      //borrow this solution here http://stackoverflow.com/questions/22910496/move-object-within-canvas-boundary-limit
+      var obj = e.target;
+      // if object is too big ignore
+      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
+        return;
+      }
+      obj.setCoords();
+      // top-left  corner
+      if (obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0) {
+        obj.top = Math.max(obj.top, obj.top - obj.getBoundingRect().top);
+        obj.left = Math.max(obj.left, obj.left - obj.getBoundingRect().left);
+      }
+      // bot-right corner
+      if (obj.getBoundingRect().top + obj.getBoundingRect().height > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width > obj.canvas.width) {
+        obj.top = Math.min(obj.top, obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top);
+        obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left);
+      }
     });
 
   }]);
