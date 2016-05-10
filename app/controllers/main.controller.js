@@ -50,25 +50,29 @@ angular.module('app')
         // iw, ih - image dimestions
         var fw, fh;
         var width_ratio = $scope.canvas.width / img.width;
-        var height_ratio = $scope.canvas.height /img.height;
-        
+        var height_ratio = $scope.canvas.height / img.height;
+
         //this
         fw = img.width * width_ratio;
         fh = img.height * fw / img.width;
-        
+
+        //make this smaller min 10%
+        fw = fw - (fw * 0.1);
+        fh = fh - (fh * 0.1);
+
         //use this if we will have images with width > height
-      /*  
-        if (width_ratio > height_ratio) {
-          fw = iw * width_ratio;
-          fh = ih*fw/iw;
-        } else {
-          fh = ih * height_ratio;
-          fw = iw*fh/ih;
-        }
-        */
+        /*
+         if (width_ratio > height_ratio) {
+         fw = iw * width_ratio;
+         fh = ih*fw/iw;
+         } else {
+         fh = ih * height_ratio;
+         fw = iw*fh/ih;
+         }
+         */
         var obj = {
-          width:fw,
-          height:fh
+          width: fw,
+          height: fh
         };
 
         if (lastAdded.top && lastAdded.left) {
@@ -121,12 +125,12 @@ angular.module('app')
     });
 
     //here we block the scaling over canvas
-  /*  $scope.canvas.on("object:scaling", function (e) {
-      var obj = e.target;
-      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
-        return;
-      }
-    });*/
+    /*  $scope.canvas.on("object:scaling", function (e) {
+     var obj = e.target;
+     if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
+     return;
+     }
+     });*/
 
     //here we block the moving over canvas
     $scope.canvas.on("object:moving", function (e) {
