@@ -48,11 +48,27 @@ angular.module('app')
 
         // cw, ch - canvas dimestions
         // iw, ih - image dimestions
-
-
+        var fw, fh;
+        var width_ratio = $scope.canvas.width / img.width;
+        var height_ratio = $scope.canvas.height /img.height;
+        
+        //this
+        fw = img.width * width_ratio;
+        fh = img.height * fw / img.width;
+        
+        //use this if we will have images with width > height
+      /*  
+        if (width_ratio > height_ratio) {
+          fw = iw * width_ratio;
+          fh = ih*fw/iw;
+        } else {
+          fh = ih * height_ratio;
+          fw = iw*fh/ih;
+        }
+        */
         var obj = {
-          scaleX: $scope.canvas.width / img.width,
-          scaleY: $scope.canvas.height / (3*img.height)
+          width:fw,
+          height:fh
         };
 
         if (lastAdded.top && lastAdded.left) {
