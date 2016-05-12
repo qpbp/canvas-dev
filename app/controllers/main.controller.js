@@ -124,14 +124,6 @@ angular.module('app')
       $scope.$apply()
     });
 
-    //here we block the scaling over canvas
-    /*  $scope.canvas.on("object:scaling", function (e) {
-     var obj = e.target;
-     if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
-     return;
-     }
-     });*/
-
     //here we block the moving over canvas
     $scope.canvas.on("object:moving", function (e) {
       //borrow this solution here http://stackoverflow.com/questions/22910496/move-object-within-canvas-boundary-limit
@@ -152,5 +144,33 @@ angular.module('app')
         obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left);
       }
     });
+
+    //here we will block scaling
+    $scope.canvas.observe("object:scaling", function (e) {
+      var shape = e.target,
+        maxWidth = $scope.product.canvas.width,
+        maxHeight = $scope.product.canvas.height,
+        actualWidth = shape.scaleX * shape.width,
+        actualHeight = shape.scaleY * shape.height;
+      
+      if (!isNaN(maxWidth) && actualWidth >= maxWidth) {
+        shape.set({
+          scaleX: maxWidth / shape.width,
+          lockScalingX: true
+        });
+      }
+
+      if (!isNaN(maxHeight) && actualHeight >= maxHeight) {
+        shape.set({
+          scaleY: maxHeight / shape.height,
+          lockScalingY: true
+        });
+      }
+
+    });
+
+    $scope.canvas.onBeforeScaleRotate = function lock(object) {
+      object.set({lockScalingX: false, lockScalingY: false});
+    };
 
   }]);
