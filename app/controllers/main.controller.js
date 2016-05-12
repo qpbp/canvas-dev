@@ -152,19 +152,15 @@ angular.module('app')
         maxHeight = $scope.product.canvas.height,
         actualWidth = shape.scaleX * shape.width,
         actualHeight = shape.scaleY * shape.height;
-      
+
       if (!isNaN(maxWidth) && actualWidth >= maxWidth) {
-        shape.set({
-          scaleX: maxWidth / shape.width,
-          lockScalingX: true
-        });
+        shape.set({lockScalingX: true});
+        shape.set({scaleX: maxWidth / shape.width});
       }
 
       if (!isNaN(maxHeight) && actualHeight >= maxHeight) {
-        shape.set({
-          scaleY: maxHeight / shape.height,
-          lockScalingY: true
-        });
+        shape.set({lockScalingY: true});
+        shape.set({scaleY: maxHeight / shape.height});
       }
 
     });
