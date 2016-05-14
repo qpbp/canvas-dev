@@ -72,7 +72,8 @@ angular.module('app')
          */
         var obj = {
           width: fw,
-          height: fh
+          height: fh,
+          lockUniScaling: true
         };
 
         if (lastAdded.top && lastAdded.left) {
@@ -115,23 +116,8 @@ angular.module('app')
       });
     };
 
-    //here we save the last coord of object
-    $scope.canvas.on("object:selected", function (options, event) {
-      var object = options.target; //This is the object selected
-      lastAdded.left = object.left;
-      lastAdded.top = object.top;
-      lastAdded.logoUrl = object.logoUrl;
-      $scope.$apply()
-    });
+    function keepPosFixed(obj) {
 
-    //here we block the moving over canvas
-    $scope.canvas.on("object:moving", function (e) {
-      //borrow this solution here http://stackoverflow.com/questions/22910496/move-object-within-canvas-boundary-limit
-      var obj = e.target;
-      // if object is too big ignore
-      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
-        return;
-      }
       obj.setCoords();
       // top-left  corner
       if (obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0) {
@@ -143,30 +129,32 @@ angular.module('app')
         obj.top = Math.min(obj.top, obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top);
         obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left);
       }
+    };
+
+    $scope.canvas.on('object:moving', function (e) {
+      var obj = e.target;
+      // if object is too big ignore
+      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
+        return;
+      }
+      keepPosFixed(obj);
     });
 
-    //here we will block scaling
-    $scope.canvas.observe("object:scaling", function (e) {
+    $scope.canvas.on("object:scaling", function (e) {
       var shape = e.target,
-        maxWidth = $scope.product.canvas.width,
-        maxHeight = $scope.product.canvas.height,
+        maxWidth = $scope.canvas.width,
+        maxHeight = $scope.canvas.height,
         actualWidth = shape.scaleX * shape.width,
         actualHeight = shape.scaleY * shape.height;
 
-      if (!isNaN(maxWidth) && actualWidth >= maxWidth) {
-        shape.set({lockScalingX: true});
-        shape.set({scaleX: maxWidth / shape.width});
+      if (actualHeight >= maxHeight || actualWidth >= maxWidth) {
+        var scalef = (maxHeight / shape.height) < (maxWidth / shape.width) ? (maxHeight / shape.height) : (maxWidth / shape.width);
+        shape.set({
+          scaleY: scalef,
+          scaleX: scalef
+        });
       }
-
-      if (!isNaN(maxHeight) && actualHeight >= maxHeight) {
-        shape.set({lockScalingY: true});
-        shape.set({scaleY: maxHeight / shape.height});
-      }
-
+      keepPosFixed(shape);
     });
-
-    $scope.canvas.onBeforeScaleRotate = function lock(object) {
-      object.set({lockScalingX: false, lockScalingY: false});
-    };
 
   }]);
