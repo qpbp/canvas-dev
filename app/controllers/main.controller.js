@@ -4,7 +4,6 @@ angular.module('app')
 
   .controller('MainController', ['$scope', function ($scope) {
 
-
     //here we will save the last added object on canvas
     var lastAdded = {
       left: null,
@@ -35,6 +34,14 @@ angular.module('app')
     $scope.canvas.setHeight($scope.product.canvas.height);
     $scope.canvas.setWidth($scope.product.canvas.width);
 
+    fabric.Object.prototype.set({
+      transparentCorners: true,
+      rotatingPointOffset: 0
+    });
+
+    //removing the top scale
+    fabric.Object.prototype.setControlsVisibility({mt: false});
+
     //selectLog function
     //param: logo image link
     $scope.selectLogo = function (logo) {
@@ -56,9 +63,10 @@ angular.module('app')
         fw = img.width * width_ratio;
         fh = img.height * fw / img.width;
 
-        //make this smaller min 10%
-        fw = fw - (fw * 0.1);
-        fh = fh - (fh * 0.1);
+        //make this smaller min 20%
+        var smaller = 0.2;
+        fw = fw - (fw * smaller);
+        fh = fh - (fh * smaller);
 
         //use this if we will have images with width > height
         /*
@@ -72,8 +80,7 @@ angular.module('app')
          */
         var obj = {
           width: fw,
-          height: fh,
-          lockUniScaling: true
+          height: fh
         };
 
         if (lastAdded.top && lastAdded.left) {
@@ -84,10 +91,12 @@ angular.module('app')
         img.set(obj);
 
         img.logoUrl = logo;
+
+        $scope.canvas.centerObject(img);
         $scope.canvas.add(img);
+        $scope.canvas.renderAll();
       });
 
-      $scope.canvas.renderAll();
     };
 
     //generate function
@@ -146,6 +155,16 @@ angular.module('app')
         maxHeight = $scope.canvas.height,
         actualWidth = shape.scaleX * shape.width,
         actualHeight = shape.scaleY * shape.height;
+
+      var angle = shape.getAngle() % 360;
+      var floorAngle = Math.floor(angle);
+
+      if (!( (315 < floorAngle && floorAngle <= 359)
+          || (0 < floorAngle && floorAngle <= 45)
+          || (135 < floorAngle && floorAngle <= 225)
+        )) {
+        actualHeight = [actualWidth, actualWidth = actualHeight][0];
+      }
 
       if (actualHeight >= maxHeight || actualWidth >= maxWidth) {
         var scalef = (maxHeight / shape.height) < (maxWidth / shape.width) ? (maxHeight / shape.height) : (maxWidth / shape.width);
